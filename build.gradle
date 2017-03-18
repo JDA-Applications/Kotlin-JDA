@@ -84,6 +84,23 @@ wrapper {
 
 publishing {
     publications {
-        maven(MavenPublication) { }
+        maven(MavenPublication) {
+            groupId 'com.github.JDA-Applications'
+            artifactId 'Kotlin-JDA'
+            version project.version
+
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            artifact jar {
+                classifier ''
+            }
+            artifact shadowJar {
+                classifier 'withDependencies'
+            }
+        }
     }
 }
