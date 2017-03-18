@@ -27,6 +27,7 @@ buildscript {
 plugins {
     id 'java'
     id 'idea'
+    id 'maven'
     id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
@@ -78,4 +79,8 @@ build {
     javadocJar.mustRunAfter jar
     sourcesJar.mustRunAfter javadocJar
     shadowJar.mustRunAfter sourcesJar
+}
+
+wrapper {
+    gradleVersion = '3.4.1'
 }
