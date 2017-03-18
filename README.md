@@ -1,7 +1,7 @@
 # Kotlin-JDA
 
-JDA: ![ [jda-version](https://github.com/DV8FromTheWorld/JDA) ](https://camo.githubusercontent.com/e7694321b7100c71210308a64c77851c6929aca9/68747470733a2f2f6170692e62696e747261792e636f6d2f7061636b616765732f64763866726f6d746865776f726c642f6d6176656e2f4a44412f696d616765732f646f776e6c6f61642e737667)<br>
-Kotlin-JDA: ![ [jitpack](https://jitpack.io/v/JDA-Applications/Kotlin-JDA.svg) ](https://jitpack.io/#JDA-Applications/Kotlin-JDA)
+JDA: [ ![jda](https://api.bintray.com/packages/dv8fromtheworld/maven/JDA/images/download.svg) ](https://github.com/DV8FromTheWorld/JDA)<br>
+Kotlin-JDA: [ ![jitpack](https://jitpack.io/v/JDA-Applications/Kotlin-JDA.svg) ](https://jitpack.io/#JDA-Applications/Kotlin-JDA)
 
 A kotlin interface for JDA, providing extensions and convenience for kotlin based projects that want to interact with JDA
 
