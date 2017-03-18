@@ -26,8 +26,8 @@ infix fun MessageChannel.send(init: MessageBuilder.() -> Unit): Message {
     return sendMessage(msg).complete()
 }
 
-infix fun MessageChannel.send(lazyContent: () -> String): Message {
-    return sendMessage(lazyContent()).complete()
+infix fun MessageChannel.sendText(lazyContent: () -> Any): Message {
+    return sendMessage(lazyContent().toString()).complete()
 }
 
 infix fun MessageChannel.sendEmbed(init: EmbedBuilder.() -> Unit): Message {
@@ -36,16 +36,16 @@ infix fun MessageChannel.sendEmbed(init: EmbedBuilder.() -> Unit): Message {
 }
 
 
-infix fun MessageChannel.sendAsync(init: MessageBuilder.() -> Unit): Promise<Message> {
+infix fun MessageChannel.sendAsync(init: MessageBuilder.() -> Unit): RestPromise<Message> {
     val msg = message(init = init)
     return sendMessage(msg).promise()
 }
 
-infix fun MessageChannel.sendAsync(lazyContent: () -> String): Promise<Message> {
-    return sendMessage(lazyContent()).promise()
+infix fun MessageChannel.sendTextAsync(lazyContent: () -> Any): RestPromise<Message> {
+    return sendMessage(lazyContent().toString()).promise()
 }
 
-infix fun MessageChannel.sendEmbedAsync(init: EmbedBuilder.() -> Unit): Promise<Message> {
+infix fun MessageChannel.sendEmbedAsync(init: EmbedBuilder.() -> Unit): RestPromise<Message> {
     val msg = message {
         embed(init)
     }
@@ -58,8 +58,8 @@ infix fun Message.edit(init: MessageBuilder.() -> Unit): Message {
     return editMessage(msg).complete()
 }
 
-infix fun Message.edit(lazyContent: () -> String): Message {
-    return editMessage(lazyContent()).complete()
+infix fun Message.editText(lazyContent: () -> Any): Message {
+    return editMessage(lazyContent().toString()).complete()
 }
 
 infix fun Message.editEmbed(init: EmbedBuilder.() -> Unit): Message {
@@ -68,16 +68,16 @@ infix fun Message.editEmbed(init: EmbedBuilder.() -> Unit): Message {
 }
 
 
-infix fun Message.editAsync(init: MessageBuilder.() -> Unit): Promise<Message> {
+infix fun Message.editAsync(init: MessageBuilder.() -> Unit): RestPromise<Message> {
     val msg = message(init = init)
     return editMessage(msg).promise()
 }
 
-infix fun Message.editAsync(lazyContent: () -> String): Promise<Message> {
-    return editMessage(lazyContent()).promise()
+infix fun Message.editTextAsync(lazyContent: () -> Any): RestPromise<Message> {
+    return editMessage(lazyContent().toString()).promise()
 }
 
-infix fun Message.editEmbedAsync(init: EmbedBuilder.() -> Unit): Promise<Message> {
+infix fun Message.editEmbedAsync(init: EmbedBuilder.() -> Unit): RestPromise<Message> {
     val msg = message { embed(init) }
     return editMessage(msg).promise()
 }

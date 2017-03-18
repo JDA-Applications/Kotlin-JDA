@@ -18,19 +18,19 @@ package club.minnced.kjda
 
 import net.dv8tion.jda.core.requests.RestAction
 
-fun<V> RestAction<V>.promise() = Promise(this)
+fun<V> RestAction<V>.promise() = RestPromise(this)
 
-class Promise<V>(action: RestAction<V>) {
+class RestPromise<V>(action: RestAction<V>) {
 
     private val success = Callback<V>()
     private val failure = Callback<Throwable>()
 
-    infix fun then(lazyCallback: (V) -> Unit): Promise<V> {
+    infix fun then(lazyCallback: (V) -> Unit): RestPromise<V> {
         success.backing = lazyCallback
         return this
     }
 
-    infix fun catch(lazyHandler: (Throwable) -> Unit): Promise<V> {
+    infix fun catch(lazyHandler: (Throwable) -> Unit): RestPromise<V> {
         failure.backing = lazyHandler
         return this
     }
