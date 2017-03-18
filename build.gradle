@@ -47,11 +47,12 @@ repositories {
     mavenCentral()
     jcenter()
 }
+
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
     // exclude when published
-    compile 'net.dv8tion:JDA:3.0.0_156'
+    compileOnly 'net.dv8tion:JDA:3.0.0_156'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -63,15 +64,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
-
-jar {
-    exclude 'net/dv8tion/jda/**'
-}
-
-shadowJar {
-    exclude 'net/dv8tion/jda/**'
-}
-
 
 build {
     dependsOn clean
