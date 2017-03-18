@@ -27,7 +27,7 @@ buildscript {
 plugins {
     id 'java'
     id 'idea'
-    id 'maven'
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
@@ -64,9 +64,14 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-shadowJar {
-    exclude('net/dv8tion/jda/**')
+jar {
+    exclude 'net/dv8tion/jda/**'
 }
+
+shadowJar {
+    exclude 'net/dv8tion/jda/**'
+}
+
 
 build {
     dependsOn clean
@@ -83,4 +88,10 @@ build {
 
 wrapper {
     gradleVersion = '3.4.1'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) { }
+    }
 }
