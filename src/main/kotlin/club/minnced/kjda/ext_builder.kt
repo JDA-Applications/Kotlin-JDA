@@ -22,6 +22,10 @@ import net.dv8tion.jda.core.entities.IMentionable
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.entities.MessageEmbed.Field
+import java.awt.Color
+import java.awt.Color.decode
+import java.time.Instant
+import java.time.temporal.TemporalAccessor
 
 fun message(builder: MessageBuilder = MessageBuilder(), init: MessageBuilder.() -> Unit): Message {
     builder.init()
@@ -83,6 +87,28 @@ infix fun MutableSet<Field>.and(init: FieldBuilder.() -> Unit): MutableSet<Field
     return this
 }
 
+infix inline fun EmbedBuilder.color(lazy: () -> String)
+    = this.setColor(decode(lazy()))
+infix fun EmbedBuilder.color(color: Color)
+    = this.setColor(color)
+infix inline fun EmbedBuilder.image(lazy: () -> String)
+    = this.setImage(lazy())
+
+infix fun EmbedBuilder.author(init: Author.() -> Unit) {
+    val author = Author()
+    author.init()
+    this.setAuthor(author.name, author.url, author.icon)
+}
+
+inline fun EmbedBuilder.footer(icon: String? = null, lazy: () -> String)
+    = this.setFooter(lazy(), icon)
+
+inline fun EmbedBuilder.title(url: String? = null, lazy: () -> String)
+    = this.setTitle(lazy(), url)
+
+fun EmbedBuilder.timestamp(lazy: () -> TemporalAccessor = { Instant.now() })
+    = this.setTimestamp(lazy())
+
 class FieldBuilder internal constructor() {
 
     var name: String = EmbedBuilder.ZERO_WIDTH_SPACE
@@ -97,5 +123,11 @@ class FieldBuilder internal constructor() {
         }
     var inline: Boolean = true
 
-    fun build() = Field(name, value, inline)
+    internal fun build() = Field(name, value, inline)
 }
+
+data class Author internal constructor(
+    val name: String = EmbedBuilder.ZERO_WIDTH_SPACE,
+    val url: String? = null,
+    val icon: String? = null
+)

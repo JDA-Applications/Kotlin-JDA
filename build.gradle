@@ -38,6 +38,7 @@ targetCompatibility = 1.8
 
 group = 'club.minnced'
 version = '0.BETA.1'
+def jda_version = '3.0.0_156'
 
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
@@ -52,7 +53,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
     // exclude when published
-    compileOnly 'net.dv8tion:JDA:3.0.0_156'
+    compileOnly "net.dv8tion:JDA:$jda_version"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
