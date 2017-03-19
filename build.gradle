@@ -33,6 +33,7 @@ plugins {
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'org.jetbrains.dokka'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -58,6 +59,7 @@ dependencies {
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    logging.level = LogLevel.QUIET
     outputFormat = 'javadoc'
     outputDirectory = "$buildDir/dokkaJavadoc"
 }
@@ -79,11 +81,6 @@ task sources(type: Copy) {
 
 compileJava {
     dependsOn sources
-}
-
-javadoc {
-    failOnError = false
-    options.memberLevel = JavadocMemberLevel.PUBLIC
 }
 
 build {

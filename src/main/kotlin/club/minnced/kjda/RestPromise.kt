@@ -21,6 +21,11 @@ import net.dv8tion.jda.core.requests.RestAction
 /** Constructs a new [RestPromise] for this [RestAction] instance */
 fun<V> RestAction<V>.promise() = RestPromise(this)
 
+/** Shortcut for [RestPromise.then] */
+infix fun<V> RestAction<V>.then(apply: V?.() -> Unit) = promise() then { it.apply() }
+/** Shortcut for [RestPromise.catch] */
+infix fun<V> RestAction<V>.catch(apply: Throwable?.() -> Unit) = promise() catch { it.apply() }
+
 /**
  * This class allows the end-user to specify callback behaviour after issuing
  * a request.
