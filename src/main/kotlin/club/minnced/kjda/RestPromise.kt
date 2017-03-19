@@ -46,7 +46,6 @@ internal class Callback<T> {
 
     var finishedValue: T? = null
     var finished: Boolean = false
-        get() = finishedValue !== null
     var backing: (T?) -> Unit = { }
         set(value) {
             if (finished)
@@ -55,6 +54,7 @@ internal class Callback<T> {
         }
 
     fun call(value: T?): Unit = synchronized( backing ) {
+        finished = true
         finishedValue = value
         backing(value)
     }
