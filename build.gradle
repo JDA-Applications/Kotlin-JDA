@@ -21,6 +21,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:0.9.9'
     }
 }
 
@@ -56,14 +57,33 @@ dependencies {
     compileOnly "net.dv8tion:JDA:$jda_version"
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from "${buildDir}/filteredSrc"
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/dokkaJavadoc"
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from "$buildDir/sources"
+}
+
+task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
     classifier = 'javadoc'
-    from javadoc.destinationDir
+    from dokkaJavadoc.outputDirectory
+}
+
+task sources(type: Copy) {
+    from 'src/main/kotlin'
+    into "$buildDir/sources"
+}
+
+compileJava {
+    dependsOn sources
+}
+
+javadoc {
+    failOnError = false
+    options.memberLevel = JavadocMemberLevel.PUBLIC
 }
 
 build {
@@ -81,6 +101,12 @@ build {
 
 wrapper {
     gradleVersion = '3.4.1'
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Version': version
+    }
 }
 
 publishing {
