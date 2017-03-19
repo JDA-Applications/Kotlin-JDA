@@ -26,6 +26,12 @@ infix fun<V> RestAction<V>.then(apply: V?.() -> Unit) = promise() then { it.appl
 /** Shortcut for [RestPromise.catch] */
 infix fun<V> RestAction<V>.catch(apply: Throwable?.() -> Unit) = promise() catch { it.apply() }
 
+fun<V> RestAction<V>.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
+    = if (condition) promise().block() else { }
+
+fun<V> RestAction<V>.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
+    = if (!condition) promise().block() else { }
+
 /**
  * This class allows the end-user to specify callback behaviour after issuing
  * a request.
