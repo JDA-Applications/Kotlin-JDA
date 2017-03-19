@@ -16,7 +16,10 @@
 
 package club.minnced.kjda
 
+import kotlinx.coroutines.experimental.*
 import net.dv8tion.jda.core.requests.RestAction
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /** Constructs a new [RestPromise] for this [RestAction] instance */
 fun<V> RestAction<V>.promise() = RestPromise(this)
@@ -31,6 +34,23 @@ fun<V> RestAction<V>.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit
 
 fun<V> RestAction<V>.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
     = if (!condition) promise().block() else { }
+
+suspend fun<V> RestAction<V>.start() = launch(NonCancellable) {
+    this@start.complete()
+}
+
+suspend fun<V> RestAction<V>.get() = run(NonCancellable) {
+    return@run this@get.complete()
+}
+
+suspend fun<V> RestAction<V>.prepare() = async(NonCancellable, start = false) {
+    return@async this@prepare.complete()
+}
+
+suspend fun<V> RestAction<V>.after(time: Long, unit: TimeUnit = MILLISECONDS) = run(CommonPool) {
+    delay(time, unit)
+    return@run this@after.complete()
+}
 
 /**
  * This class allows the end-user to specify callback behaviour after issuing

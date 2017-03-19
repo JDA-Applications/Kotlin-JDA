@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
 buildscript {
     ext.kotlin_version = '1.1.1'
     repositories {
@@ -44,7 +39,7 @@ targetCompatibility = 1.8
 
 group = 'club.minnced'
 version = '0.BETA.1'
-def jda_version = '3.0.0_160'
+def jda_version = '3.0.0_165'
 
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
@@ -61,6 +56,9 @@ repositories {
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.14'
+
+    // exclude when published
     compileOnly "net.dv8tion:JDA:$jda_version"
 
     sourceSets.examples.compileClasspath += configurations.compile + configurations.compileOnly
@@ -140,5 +138,11 @@ publishing {
                 classifier 'withDependencies'
             }
         }
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
     }
 }
