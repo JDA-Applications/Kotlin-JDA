@@ -28,13 +28,13 @@ typealias static = JvmStatic
 class AsyncEventManager(private val executor: ExecutorService = AsyncEventManager.POOL) : IEventManager {
 
     companion object {
-        @static val POOL: ExecutorService by lazy({
+        @static val POOL: ExecutorService by lazy {
             Executors.newCachedThreadPool {
                 val t = Thread(it, "EventThread")
                 t.isDaemon = true
                 t
             }
-        })
+        }
     }
 
     private val listeners = CopyOnWriteArraySet<EventListener>()

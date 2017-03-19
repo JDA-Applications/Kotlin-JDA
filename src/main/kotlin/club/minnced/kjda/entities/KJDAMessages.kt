@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 @file:JvmName("KJDAMessages")
-package club.minnced.kjda
+package club.minnced.kjda.entities
 
+import club.minnced.kjda.*
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Message
@@ -264,4 +265,17 @@ data class KMessage(
 ) {
     internal val sendable: Boolean
         get() = content?.isNotEmpty() ?: false || embed !== null
+}
+
+/**
+ * Splits the rawContent of this message into
+ * the provided slice amount, use `<= 0` amount to slice all.
+ *
+ * Using `\s+` as slice regex
+ */
+operator fun Message.div(upTo: Int): List<String> {
+    if (upTo < 1)
+        return rawContent / upTo
+
+    return rawContent / upTo
 }
