@@ -53,6 +53,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.14'
 
     // exclude when published
     compileOnly "net.dv8tion:JDA:$jda_version"
@@ -126,5 +127,11 @@ publishing {
                 classifier 'withDependencies'
             }
         }
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
     }
 }
