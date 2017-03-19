@@ -25,12 +25,12 @@ class RestPromise<V>(action: RestAction<V>) {
     private val success = Callback<V>()
     private val failure = Callback<Throwable>()
 
-    infix fun then(lazyCallback: (V) -> Unit): RestPromise<V> {
+    infix fun then(lazyCallback: (V?) -> Unit): RestPromise<V> {
         success.backing = lazyCallback
         return this
     }
 
-    infix fun catch(lazyHandler: (Throwable) -> Unit): RestPromise<V> {
+    infix fun catch(lazyHandler: (Throwable?) -> Unit): RestPromise<V> {
         failure.backing = lazyHandler
         return this
     }
@@ -47,14 +47,14 @@ internal class Callback<T> {
     var finishedValue: T? = null
     var finished: Boolean = false
         get() = finishedValue !== null
-    var backing: (T) -> Unit = { }
+    var backing: (T?) -> Unit = { }
         set(value) {
             if (finished)
-                value(finishedValue!!)
+                value(finishedValue)
             field = value
         }
 
-    fun call(value: T): Unit = synchronized( backing ) {
+    fun call(value: T?): Unit = synchronized( backing ) {
         finishedValue = value
         backing(value)
     }
