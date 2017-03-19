@@ -20,6 +20,7 @@ import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.entities.MessageEmbed
 
 /**
  * Sends a new [Message] to the receiving [MessageChannel]
@@ -38,6 +39,36 @@ import net.dv8tion.jda.core.entities.MessageChannel
 infix fun MessageChannel.send(init: MessageBuilder.() -> Unit): Message {
     val msg = message(init = init)
     return sendMessage(msg).complete()
+}
+
+/**
+ * Sends a new [Message] constructed from the contents
+ * of the provided [KMessage].
+ *
+ * It is recommended to [sendAsync] when the resulting [Message]
+ * is not used.
+ *
+ * @param[message]
+ *       A sendable [KMessage] instance
+ *
+ * @throws[IllegalArgumentException]
+ *        If the provided message is empty
+ *
+ * @return[Message] - The message that has been processed
+ */
+infix fun MessageChannel.send(message: KMessage): Message {
+    require(message.sendable) {
+        "Cannot send empty message!"
+    }
+
+    val (content, tts, embed) = message
+    return send {
+        if (content !== null)
+            this += content
+        if (embed !== null)
+            this.setEmbed(embed)
+        this.setTTS(tts)
+    }
 }
 
 /**
@@ -99,6 +130,33 @@ infix fun MessageChannel.sendAsync(init: MessageBuilder.() -> Unit): RestPromise
 }
 
 /**
+ * Sends a new [Message] constructed from the contents
+ * of the provided [KMessage].
+ *
+ * @param[message]
+ *       A sendable [KMessage] instance
+ *
+ * @throws[IllegalArgumentException]
+ *        If the provided message is empty
+ *
+ * @return[RestPromise] - RestPromise representing the send task
+ */
+infix fun MessageChannel.sendAsync(message: KMessage): RestPromise<Message> {
+    require(message.sendable) {
+        "Cannot send empty message!"
+    }
+
+    val (content, tts, embed) = message
+    return sendAsync {
+        if (content !== null)
+            this += content
+        if (embed !== null)
+            this.setEmbed(embed)
+        this.setTTS(tts)
+    }
+}
+
+/**
  * Sends a [Message] to the receiving [MessageChannel]
  * and returns a [RestPromise] to represent the async task.
  *
@@ -145,6 +203,21 @@ infix fun Message.edit(init: MessageBuilder.() -> Unit): Message {
     return editMessage(msg).complete()
 }
 
+infix fun Message.edit(message: KMessage): Message {
+    require(message.sendable) {
+        "Cannot send empty message!"
+    }
+
+    val (content, tts, embed) = message
+    return edit {
+        if (content !== null)
+            this += content
+        if (embed !== null)
+            this.setEmbed(embed)
+        this.setTTS(tts)
+    }
+}
+
 infix fun Message.editText(lazyContent: () -> Any): Message {
     return editMessage(lazyContent().toString()).complete()
 }
@@ -160,6 +233,21 @@ infix fun Message.editAsync(init: MessageBuilder.() -> Unit): RestPromise<Messag
     return editMessage(msg).promise()
 }
 
+infix fun Message.editAsync(message: KMessage): RestPromise<Message> {
+    require(message.sendable) {
+        "Cannot send empty message!"
+    }
+
+    val (content, tts, embed) = message
+    return editAsync {
+        if (content !== null)
+            this += content
+        if (embed !== null)
+            this.setEmbed(embed)
+        this.setTTS(tts)
+    }
+}
+
 infix fun Message.editTextAsync(lazyContent: () -> Any): RestPromise<Message> {
     return editMessage(lazyContent().toString()).promise()
 }
@@ -167,4 +255,13 @@ infix fun Message.editTextAsync(lazyContent: () -> Any): RestPromise<Message> {
 infix fun Message.editEmbedAsync(init: EmbedBuilder.() -> Unit): RestPromise<Message> {
     val msg = message { embed(init) }
     return editMessage(msg).promise()
+}
+
+data class KMessage(
+    val content: String? = null,
+    val tts: Boolean = false,
+    val embed: MessageEmbed? = null
+) {
+    internal val sendable: Boolean
+        get() = content?.isNotEmpty() ?: false || embed !== null
 }
