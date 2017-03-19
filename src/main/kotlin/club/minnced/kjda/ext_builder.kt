@@ -27,6 +27,21 @@ import java.awt.Color.decode
 import java.time.Instant
 import java.time.temporal.TemporalAccessor
 
+/**
+ * Constructs a [Message] from the specified [init] function
+ * which has a [MessageBuilder] as its receiver.
+ *
+ * To set an embed use [embed]!
+ *
+ * @param[builder]
+ *       An optional [MessageBuilder] to use as receiver,
+ *       this creates a new instance by default.
+ * @param[init]
+ *       A function which constructs a new [Message] by using
+ *       the receiving [MessageBuilder]
+ *
+ * @return[Message] - a sendable finished Message instance
+ */
 fun message(builder: MessageBuilder = MessageBuilder(), init: MessageBuilder.() -> Unit): Message {
     builder.init()
     return builder.build()
@@ -44,6 +59,18 @@ operator fun MessageBuilder.plusAssign(other: IMentionable) {
     append(other)
 }
 
+/**
+ * Constructs a [MessageEmbed] for the receiving [MessageBuilder]
+ * and sets that constructed Embed using [MessageBuilder.setEmbed]!
+ *
+ * @param[init]
+ *       A function which constructs a [MessageEmbed] from the receiving
+ *       [EmbedBuilder]
+ *
+ * @receiver[MessageBuilder]
+ *
+ * @return[MessageBuilder] - current MessageBuilder
+ */
 infix inline fun MessageBuilder.embed(init: EmbedBuilder.() -> Unit): MessageBuilder {
     val builder = EmbedBuilder()
     builder.init()
@@ -51,6 +78,15 @@ infix inline fun MessageBuilder.embed(init: EmbedBuilder.() -> Unit): MessageBui
     return this
 }
 
+/**
+ * Constructs a single [MessageEmbed] using
+ * a receiver function on [EmbedBuilder]
+ *
+ * @param[init]
+ *       The function which constructs the [MessageEmbed]
+ *
+ * @return[MessageEmbed] - a finished sendable [MessageEmbed]
+ */
 fun embed(init: EmbedBuilder.() -> Unit): MessageEmbed {
     val builder = EmbedBuilder()
     builder.init()

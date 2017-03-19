@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:JvmName("KJDAMessageSending")
 package club.minnced.kjda
 
 import net.dv8tion.jda.core.EmbedBuilder
@@ -21,30 +21,117 @@ import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
 
+/**
+ * Sends a new [Message] to the receiving [MessageChannel]
+ * and returns the resulting [Message] object.
+ *
+ * It is recommended to use [sendAsync] if the returned
+ * [Message] is not used.
+ *
+ * @param[init]
+ *       A function which holds a [MessageBuilder] as its receiver
+ *
+ * @receiver[MessageChannel]
+ *
+ * @return [Message] of successful send task.
+ */
 infix fun MessageChannel.send(init: MessageBuilder.() -> Unit): Message {
     val msg = message(init = init)
     return sendMessage(msg).complete()
 }
 
+/**
+ * Sends a new [Message] to the receiving [MessageChannel]
+ * and returns the resulting [Message] object.
+ *
+ * It is recommended to use [sendTextAsync] if the returned
+ * [Message] is not used.
+ *
+ * @param[lazyContent]
+ *       A function which provides anything and will be converted to a [String]
+ *       to be provided as `Message Content`.
+ *
+ * @receiver[MessageChannel]
+ *
+ * @return [Message] of successful send task.
+ */
 infix fun MessageChannel.sendText(lazyContent: () -> Any): Message {
     return sendMessage(lazyContent().toString()).complete()
 }
 
+/**
+ * Sends a new [MessageEmbed][net.dv8tion.jda.core.entities.MessageEmbed] to the receiving [MessageChannel]
+ * and returns the resulting [Message] object.
+ *
+ * It is recommended to use [sendEmbedAsync] if the returned
+ * [Message] is not used.
+ *
+ * @param[init]
+ *       A function which holds an [EmbedBuilder] as its receiver
+ *
+ * @receiver[MessageChannel]
+ *
+ * @return [Message] of successful send task.
+ */
 infix fun MessageChannel.sendEmbed(init: EmbedBuilder.() -> Unit): Message {
     val msg = message { embed(init) }
     return sendMessage(msg).complete()
 }
 
-
+/**
+ * Sends a [Message] to the receiving [MessageChannel]
+ * and returns a [RestPromise] to represent the async task.
+ *
+ * You can use [RestPromise.then] and [RestPromise.catch] to
+ * handle success and failure.
+ *
+ * @param[init]
+ *       A function which constructs a [Message] instance using
+ *       a [MessageBuilder] as its receiver.
+ *
+ * @receiver[MessageChannel]
+ *
+ * @return A [RestPromise] representing the send task
+ */
 infix fun MessageChannel.sendAsync(init: MessageBuilder.() -> Unit): RestPromise<Message> {
     val msg = message(init = init)
     return sendMessage(msg).promise()
 }
 
+/**
+ * Sends a [Message] to the receiving [MessageChannel]
+ * and returns a [RestPromise] to represent the async task.
+ *
+ * You can use [RestPromise.then] and [RestPromise.catch] to
+ * handle success and failure.
+ *
+ * @param[lazyContent]
+ *       A function which constructs a [Message] instance using
+ *       the provided function lazy load its content using a [Any.toString] call
+ *
+ * @receiver[MessageChannel]
+ *
+ * @return A [RestPromise] representing the send task
+ */
 infix fun MessageChannel.sendTextAsync(lazyContent: () -> Any): RestPromise<Message> {
     return sendMessage(lazyContent().toString()).promise()
 }
 
+/**
+ * Sends a [MessageEmbed][net.dv8tion.jda.core.entities.MessageEmbed] to the receiving [MessageChannel]
+ * and returns a [RestPromise] to represent the async task.
+ *
+ * You can use [RestPromise.then] and [RestPromise.catch] to
+ * handle success and failure.
+ *
+ * @param[init]
+ *       A function which constructs a [Message] instance using
+ *       a [EmbedBuilder] as its receiver.
+ *
+ * @receiver[MessageChannel]
+ *
+ * @return A [RestPromise] representing the send task
+ */
 infix fun MessageChannel.sendEmbedAsync(init: EmbedBuilder.() -> Unit): RestPromise<Message> {
     val msg = message {
         embed(init)

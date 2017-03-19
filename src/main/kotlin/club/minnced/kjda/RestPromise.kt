@@ -18,18 +18,54 @@ package club.minnced.kjda
 
 import net.dv8tion.jda.core.requests.RestAction
 
+/** Constructs a new [RestPromise] for this [RestAction] instance */
 fun<V> RestAction<V>.promise() = RestPromise(this)
 
+/**
+ * This class allows the end-user to specify callback behaviour after issuing
+ * a request.
+ *
+ * ```kotlin
+ * channel.sendMessage("Hello").promise() then {
+ *     println("Sent Message $it")
+ * } catch {
+ *     println("Failed to send Message")
+ *     it.printStackTrace()
+ * }
+ * ```
+ *
+ * @constructor Creates a new RestPromise for the specified [RestAction] and
+ *              calls the [RestAction.queue]
+ */
 class RestPromise<V>(action: RestAction<V>) {
 
     private val success = Callback<V>()
     private val failure = Callback<Throwable>()
 
+    /**
+     * Overrides the internal Success-Callback.
+     *
+     * The provided function is called immediately if this already finished
+     * Successfully.
+     *
+     * @param[lazyCallback] The function to replace the current Success-Callback
+     *
+     * @return The current RestPromise
+     */
     infix fun then(lazyCallback: (V?) -> Unit): RestPromise<V> {
         success.backing = lazyCallback
         return this
     }
 
+    /**
+     * Overrides the internal Failure-Callback.
+     *
+     * The provided function is called immediately if this already failed.
+     *
+     * @param[lazyHandler] The function to replace the current Failure-Callback
+     *
+     * @return The current RestPromise
+     */
     infix fun catch(lazyHandler: (Throwable?) -> Unit): RestPromise<V> {
         failure.backing = lazyHandler
         return this
