@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:JvmName("KJDAMessageSending")
+@file:JvmName("KJDAMessages")
 package club.minnced.kjda
 
 import net.dv8tion.jda.core.EmbedBuilder
