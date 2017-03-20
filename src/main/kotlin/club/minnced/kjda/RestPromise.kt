@@ -35,15 +35,15 @@ fun<V> RestAction<V>.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit
 fun<V> RestAction<V>.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
     = if (!condition) promise().block() else { }
 
-suspend fun<V> RestAction<V>.start() = launch(NonCancellable) {
+suspend fun<V> RestAction<V>.start() = launch(CommonPool) {
     this@start.complete()
 }
 
-suspend fun<V> RestAction<V>.get() = run(NonCancellable) {
+suspend fun<V> RestAction<V>.get() = run(CommonPool) {
     return@run this@get.complete()
 }
 
-suspend fun<V> RestAction<V>.prepare() = async(NonCancellable, start = false) {
+suspend fun<V> RestAction<V>.prepare() = async(CommonPool, start = false) {
     return@async this@prepare.complete()
 }
 
