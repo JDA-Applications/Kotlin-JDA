@@ -16,16 +16,11 @@
 @file:JvmName("KJDABuilders")
 package club.minnced.kjda
 
-import net.dv8tion.jda.core.EmbedBuilder
+import club.minnced.kjda.builders.KEmbedBuilder
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.IMentionable
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.entities.MessageEmbed.Field
-import java.awt.Color
-import java.awt.Color.decode
-import java.time.Instant
-import java.time.temporal.TemporalAccessor
 
 /**
  * Constructs a [Message] from the specified [init] function
@@ -47,16 +42,16 @@ fun message(builder: MessageBuilder = MessageBuilder(), init: MessageBuilder.() 
     return builder.build()
 }
 
-operator fun MessageBuilder.plusAssign(other: CharSequence) {
+operator fun Appendable.plusAssign(other: CharSequence) {
     append(other)
 }
 
-operator fun MessageBuilder.plusAssign(other: Char) {
+operator fun Appendable.plusAssign(other: Char) {
     append(other)
 }
 
-operator fun MessageBuilder.plusAssign(other: IMentionable) {
-    append(other)
+operator fun Appendable.plusAssign(other: IMentionable) {
+    append(other.asMention)
 }
 
 /**
@@ -71,99 +66,10 @@ operator fun MessageBuilder.plusAssign(other: IMentionable) {
  *
  * @return[MessageBuilder] - current MessageBuilder
  */
-infix inline fun MessageBuilder.embed(init: EmbedBuilder.() -> Unit): MessageBuilder {
-    val builder = EmbedBuilder()
-    builder.init()
-    setEmbed(builder.build())
+infix fun MessageBuilder.embed(init: KEmbedBuilder.() -> Unit): MessageBuilder {
+    setEmbed(club.minnced.kjda.builders.embed {
+        init()
+        build()
+    })
     return this
 }
-
-/**
- * Constructs a single [MessageEmbed] using
- * a receiver function on [EmbedBuilder]
- *
- * @param[init]
- *       The function which constructs the [MessageEmbed]
- *
- * @return[MessageEmbed] - a finished sendable [MessageEmbed]
- */
-fun embed(init: EmbedBuilder.() -> Unit): MessageEmbed {
-    val builder = EmbedBuilder()
-    builder.init()
-    return builder.build()
-}
-
-fun EmbedBuilder.fields(body: EmbedBuilder.() -> Set<Field>): EmbedBuilder {
-    body().forEach { addField(it) }
-    return this
-}
-
-operator fun Appendable.plusAssign(other: CharSequence) {
-    append(other)
-}
-
-operator fun Appendable.plusAssign(other: Char) {
-    append(other)
-}
-
-operator fun Appendable.plusAssign(other: IMentionable) {
-    append(other.asMention)
-}
-
-fun field(init: FieldBuilder.() -> Unit): MutableSet<Field> {
-    val builder = FieldBuilder()
-    builder.init()
-    return mutableSetOf(builder.build())
-}
-
-infix fun MutableSet<Field>.and(init: FieldBuilder.() -> Unit): MutableSet<Field> {
-    val builder = FieldBuilder()
-    builder.init()
-    this += builder.build()
-    return this
-}
-
-infix inline fun EmbedBuilder.color(lazy: () -> String)
-    = this.setColor(decode(lazy()))
-infix fun EmbedBuilder.color(color: Color)
-    = this.setColor(color)
-infix inline fun EmbedBuilder.image(lazy: () -> String)
-    = this.setImage(lazy())
-
-infix fun EmbedBuilder.author(init: Author.() -> Unit) {
-    val author = Author()
-    author.init()
-    this.setAuthor(author.name, author.url, author.icon)
-}
-
-inline fun EmbedBuilder.footer(icon: String? = null, lazy: () -> String)
-    = this.setFooter(lazy(), icon)
-
-inline fun EmbedBuilder.title(url: String? = null, lazy: () -> String)
-    = this.setTitle(lazy(), url)
-
-fun EmbedBuilder.timestamp(lazy: () -> TemporalAccessor = { Instant.now() })
-    = this.setTimestamp(lazy())
-
-class FieldBuilder internal constructor() {
-
-    var name: String = EmbedBuilder.ZERO_WIDTH_SPACE
-        set(value) {
-            require(value.length <= MessageEmbed.TITLE_MAX_LENGTH)
-            field = value
-        }
-    var value: String = EmbedBuilder.ZERO_WIDTH_SPACE
-        set(value) {
-            require(value.length <= MessageEmbed.VALUE_MAX_LENGTH)
-            field = value
-        }
-    var inline: Boolean = true
-
-    internal fun build() = Field(name, value, inline)
-}
-
-data class Author internal constructor(
-    val name: String = EmbedBuilder.ZERO_WIDTH_SPACE,
-    val url: String? = null,
-    val icon: String? = null
-)
