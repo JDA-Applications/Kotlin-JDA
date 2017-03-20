@@ -17,7 +17,7 @@
 package club.minnced.kjda.entities
 
 import club.minnced.kjda.*
-import net.dv8tion.jda.core.EmbedBuilder
+import club.minnced.kjda.builders.KEmbedBuilder
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
@@ -105,7 +105,7 @@ infix fun MessageChannel.sendText(lazyContent: () -> Any): Message {
  *
  * @return [Message] of successful send task.
  */
-infix fun MessageChannel.sendEmbed(init: EmbedBuilder.() -> Unit): Message {
+infix fun MessageChannel.sendEmbed(init: KEmbedBuilder.() -> Unit): Message {
     val msg = message { embed(init) }
     return sendMessage(msg).complete()
 }
@@ -191,7 +191,7 @@ infix fun MessageChannel.sendTextAsync(lazyContent: () -> Any): RestPromise<Mess
  *
  * @return A [RestPromise] representing the send task
  */
-infix fun MessageChannel.sendEmbedAsync(init: EmbedBuilder.() -> Unit): RestPromise<Message> {
+infix fun MessageChannel.sendEmbedAsync(init: KEmbedBuilder.() -> Unit): RestPromise<Message> {
     val msg = message {
         embed(init)
     }
@@ -223,7 +223,7 @@ infix fun Message.editText(lazyContent: () -> Any): Message {
     return editMessage(lazyContent().toString()).complete()
 }
 
-infix fun Message.editEmbed(init: EmbedBuilder.() -> Unit): Message {
+infix fun Message.editEmbed(init: KEmbedBuilder.() -> Unit): Message {
     val msg = message { embed(init) }
     return editMessage(msg).complete()
 }
@@ -253,7 +253,7 @@ infix fun Message.editTextAsync(lazyContent: () -> Any): RestPromise<Message> {
     return editMessage(lazyContent().toString()).promise()
 }
 
-infix fun Message.editEmbedAsync(init: EmbedBuilder.() -> Unit): RestPromise<Message> {
+infix fun Message.editEmbedAsync(init: KEmbedBuilder.() -> Unit): RestPromise<Message> {
     val msg = message { embed(init) }
     return editMessage(msg).promise()
 }
