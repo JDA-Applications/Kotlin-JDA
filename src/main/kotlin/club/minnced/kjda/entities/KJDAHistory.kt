@@ -16,13 +16,11 @@
 
 package club.minnced.kjda.entities
 
+import club.minnced.kjda.after
 import club.minnced.kjda.get
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.runBlocking
 import net.dv8tion.jda.core.entities.Message
-import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.MessageHistory
 import java.util.LinkedList
 import java.util.Queue
@@ -33,17 +31,7 @@ suspend fun MessageHistory.paginated() = produce<Message>(CommonPool) {
     do {
         while (messages.isNotEmpty())
             send(messages.poll())
-        delay(1, SECONDS)
-        messages += retrievePast(100).get()
+        messages += retrievePast(100).after(1, SECONDS)
     }
     while (messages.isNotEmpty())
-}
-
-val channel: MessageChannel? = null
-
-fun main(args: Array<String>) = runBlocking {
-    val history = MessageHistory(channel)
-    val it = history.paginated().iterator()
-    while (it.hasNext())
-        println(it.next())
 }
