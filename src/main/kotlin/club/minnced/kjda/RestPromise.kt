@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:Suppress("UNUSED")
 package club.minnced.kjda
 
 import kotlinx.coroutines.experimental.*
@@ -25,31 +25,31 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 fun<V> RestAction<V>.promise() = RestPromise(this)
 
 /** Shortcut for [RestPromise.then] */
-infix fun<V> RestAction<V>.then(apply: V?.() -> Unit) = promise() then { it.apply() }
+infix fun<V> RestAction<V>?.then(apply: V?.() -> Unit) = this?.promise()?.then { it.apply() }
 /** Shortcut for [RestPromise.catch] */
-infix fun<V> RestAction<V>.catch(apply: Throwable?.() -> Unit) = promise() catch { it.apply() }
+infix fun<V> RestAction<V>?.catch(apply: Throwable?.() -> Unit) = this?.promise()?.catch { it.apply() }
 
-fun<V> RestAction<V>.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
-    = if (condition) promise().block() else { }
+fun<V> RestAction<V>?.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
+    = if (condition) this?.promise()?.block() else { }
 
-fun<V> RestAction<V>.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
-    = if (!condition) promise().block() else { }
+fun<V> RestAction<V>?.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
+    = if (!condition) this?.promise()?.block() else { }
 
-suspend fun<V> RestAction<V>.start() = launch(CommonPool) {
-    this@start.complete()
+suspend fun<V> RestAction<V>?.start() = launch(CommonPool) {
+    this@start?.complete()
 }
 
-suspend fun<V> RestAction<V>.get() = run(CommonPool) {
-    return@run this@get.complete()
+suspend fun<V> RestAction<V>?.get() = run(CommonPool) {
+    return@run this@get?.complete()
 }
 
-suspend fun<V> RestAction<V>.prepare() = async(CommonPool, start = false) {
-    return@async this@prepare.complete()
+suspend fun<V> RestAction<V>?.prepare() = async(CommonPool, start = false) {
+    return@async this@prepare?.complete()
 }
 
-suspend fun<V> RestAction<V>.after(time: Long, unit: TimeUnit = MILLISECONDS) = run(CommonPool) {
+suspend fun<V> RestAction<V>?.after(time: Long, unit: TimeUnit = MILLISECONDS) = run(CommonPool) {
     delay(time, unit)
-    return@run this@after.complete()
+    return@run this@after?.complete()
 }
 
 /**
