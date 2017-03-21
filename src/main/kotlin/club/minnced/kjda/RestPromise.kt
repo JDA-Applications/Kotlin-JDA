@@ -22,34 +22,40 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 /** Constructs a new [RestPromise] for this [RestAction] instance */
-fun<V> RestAction<V>.promise() = RestPromise(this)
+fun<V> RestAction<V?>.promise() = RestPromise(this)
 
 /** Shortcut for [RestPromise.then] */
-infix fun<V> RestAction<V>?.then(apply: V?.() -> Unit) = this?.promise()?.then { it.apply() }
+infix fun<V> RestAction<V?>?.then(apply: V?.() -> Unit) = this?.promise()?.then { it.apply() }
 /** Shortcut for [RestPromise.catch] */
-infix fun<V> RestAction<V>?.catch(apply: Throwable?.() -> Unit) = this?.promise()?.catch { it.apply() }
+infix fun<V> RestAction<V?>?.catch(apply: Throwable?.() -> Unit) = this?.promise()?.catch { it.apply() }
 
-fun<V> RestAction<V>?.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
+fun<V> RestAction<V?>?.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
     = if (condition) this?.promise()?.block() else { }
 
-fun<V> RestAction<V>?.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
+fun<V> RestAction<V?>?.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
     = if (!condition) this?.promise()?.block() else { }
 
-suspend fun<V> RestAction<V>?.start() = launch(CommonPool) {
-    this@start?.complete()
+fun<V> RestAction<V?>?.prepare() = async(CommonPool, start = false) {
+    if (this@prepare === null)
+        error("Cannot use coroutine in this context! Null RestAction!")
+    return@async this@prepare.promise()
 }
 
-suspend fun<V> RestAction<V>?.get() = run(CommonPool) {
-    return@run this@get?.complete()
+fun<V> RestAction<V?>?.start() = launch(CommonPool) {
+    if (this@start === null)
+        error("Cannot use coroutine in this context! Null RestAction!")
+    this@start.queue()
 }
 
-suspend fun<V> RestAction<V>?.prepare() = async(CommonPool, start = false) {
-    return@async this@prepare?.complete()
+suspend fun<V> RestAction<V?>?.get() = run(CommonPool) {
+    if (this === null)
+        error("Cannot use coroutine in this context! Null RestAction!")
+    return@run this@get.complete()
 }
 
-suspend fun<V> RestAction<V>?.after(time: Long, unit: TimeUnit = MILLISECONDS) = run(CommonPool) {
+suspend fun<V> RestAction<V?>?.after(time: Long, unit: TimeUnit = MILLISECONDS) = run(CommonPool) {
     delay(time, unit)
-    return@run this@after?.complete()
+    return@run this@after.get()
 }
 
 /**
@@ -68,7 +74,7 @@ suspend fun<V> RestAction<V>?.after(time: Long, unit: TimeUnit = MILLISECONDS) =
  * @constructor Creates a new RestPromise for the specified [RestAction] and
  *              calls the [RestAction.queue]
  */
-class RestPromise<V>(action: RestAction<V>) {
+class RestPromise<V>(action: RestAction<V?>) {
 
     private val success = Callback<V>()
     private val failure = Callback<Throwable>()
