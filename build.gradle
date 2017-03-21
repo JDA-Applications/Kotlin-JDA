@@ -48,6 +48,10 @@ def jda_version = '3.0.0_160'
 
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
+    examples {
+        compileClasspath = main.output
+        runtimeClasspath = main.output
+    }
 }
 
 repositories {
@@ -56,10 +60,14 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-
-    // exclude when published
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compileOnly "net.dv8tion:JDA:$jda_version"
+
+    sourceSets.examples.compileClasspath += configurations.compile + configurations.compileOnly
+    sourceSets.examples.runtimeClasspath += configurations.runtime
+
+    sourceSets.test.compileClasspath += sourceSets.examples.compileClasspath
+    sourceSets.test.runtimeClasspath += sourceSets.examples.runtimeClasspath
 }
 
 task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
