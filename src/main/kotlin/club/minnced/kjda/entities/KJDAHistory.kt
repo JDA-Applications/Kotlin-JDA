@@ -26,12 +26,12 @@ import java.util.LinkedList
 import java.util.Queue
 import java.util.concurrent.TimeUnit.SECONDS
 
-suspend fun MessageHistory.paginated() = produce<Message>(CommonPool) {
+fun MessageHistory.paginated() = produce<Message>(CommonPool) {
     val messages: Queue<Message> = LinkedList(retrievePast(100).get())
     do {
         while (messages.isNotEmpty())
             send(messages.poll())
-        messages += retrievePast(100).after(1, SECONDS)
+        messages += retrievePast(100).after(1, SECONDS) ?: break
     }
     while (messages.isNotEmpty())
 }
