@@ -43,9 +43,7 @@ fun main(args: Array<String>) {
 
 class Runner : ListenerAdapter() {
 
-    override fun onMessageReceived(event: MessageReceivedEvent?) {
-        event!!
-
+    override fun onMessageReceived(event: MessageReceivedEvent) {
         if (event.author.isBot || event.author == event.jda.selfUser)
             return
         val start = System.currentTimeMillis()
