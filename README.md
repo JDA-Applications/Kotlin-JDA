@@ -27,29 +27,29 @@ dependencies {
 ### Maven
 
 ```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-		<repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
-	</repositories>
-	<dependencies>
-	    <dependency>
-            <groupId>com.github.JDA-Applications</groupId>
-            <artifactId>Kotlin-JDA</artifactId>
-            <version>master-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.dv8tion</groupId>
-            <artifactId>JDA</artifactId>
-            <version>3.0.0_156</version>
-        </dependency>
-    </dependencies>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+    <repository>
+        <id>jcenter</id>
+        <name>jcenter-bintray</name>
+        <url>http://jcenter.bintray.com</url>
+    </repository>
+</repositories>
+<dependencies>
+    <dependency>
+        <groupId>com.github.JDA-Applications</groupId>
+        <artifactId>Kotlin-JDA</artifactId>
+        <version>master-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>net.dv8tion</groupId>
+        <artifactId>JDA</artifactId>
+        <version>3.0.0_156</version>
+    </dependency>
+</dependencies>
 ```
 
 > Replace the JDA version if needed<br>
