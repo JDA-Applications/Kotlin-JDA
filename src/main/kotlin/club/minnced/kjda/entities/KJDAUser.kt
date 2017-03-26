@@ -17,10 +17,7 @@
 package club.minnced.kjda.entities
 
 import net.dv8tion.jda.core.OnlineStatus
-import net.dv8tion.jda.core.entities.Game
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.User
-import net.dv8tion.jda.core.entities.VoiceChannel
+import net.dv8tion.jda.core.entities.*
 
 typealias Status = OnlineStatus
 
@@ -30,6 +27,11 @@ val User.game: Game?
 val User.status: Status
     get() = mutualGuilds.first().getMember(this).onlineStatus
 
-val Member.connectedChannel: VoiceChannel? get() = voiceState.channel
+val User.isSelf: Boolean
+    get() = this is SelfUser
 
-val Member.isConnected: Boolean get() = connectedChannel !== null
+val Member.connectedChannel: VoiceChannel?
+    get() = voiceState.channel
+
+val Member.isConnected: Boolean
+    get() = connectedChannel !== null
