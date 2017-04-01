@@ -162,7 +162,10 @@ class KEmbedBuilder internal constructor() : Appendable {
 
 }
 
-data class KEmbedEntity(var value: String = EmbedBuilder.ZERO_WIDTH_SPACE, var url: String? = null, val icon: String? = null)
+data class KEmbedEntity(
+    var value: String = EmbedBuilder.ZERO_WIDTH_SPACE,
+    var url: String? = null,
+    var icon: String? = null)
 
 class FieldBuilder : Appendable {
 
