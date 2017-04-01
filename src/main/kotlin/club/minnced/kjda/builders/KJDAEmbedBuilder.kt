@@ -38,8 +38,8 @@ class KEmbedBuilder internal constructor() : Appendable {
 
     var time : TemporalAccessor? = null
 
-    var author: KEmbedAuthor? = null
-    var footer: KEmbedFooter? = null
+    var author: KEmbedEntity? = null
+    var footer: KEmbedEntity? = null
 
 
     internal fun build() = with (EmbedBuilder()) {
@@ -62,9 +62,9 @@ class KEmbedBuilder internal constructor() : Appendable {
             setColor(Color(color))
 
         if (footer !== null)
-            setFooter(footer.text, footer.url)
+            setFooter(footer.value, footer.icon)
         if (author !== null)
-            setAuthor(author.name, author.url, author.icon)
+            setAuthor(author.value, author.url, author.icon)
 
         build()
     }
@@ -140,14 +140,14 @@ class KEmbedBuilder internal constructor() : Appendable {
         return this
     }
 
-    infix inline fun author(lazy: KEmbedAuthor.() -> Unit): KEmbedBuilder {
-        val data = KEmbedAuthor()
+    infix inline fun author(lazy: KEmbedEntity.() -> Unit): KEmbedBuilder {
+        val data = KEmbedEntity()
         data.lazy()
         author = data
         return this
     }
-    infix inline fun footer(lazy: KEmbedFooter.() -> Unit): KEmbedBuilder {
-        val data = KEmbedFooter()
+    infix inline fun footer(lazy: KEmbedEntity.() -> Unit): KEmbedBuilder {
+        val data = KEmbedEntity()
         data.lazy()
         footer = data
         return this
@@ -162,8 +162,7 @@ class KEmbedBuilder internal constructor() : Appendable {
 
 }
 
-data class KEmbedAuthor(var name: String = EmbedBuilder.ZERO_WIDTH_SPACE, var url: String? = null, var icon: String? = null)
-data class KEmbedFooter(var text: String = EmbedBuilder.ZERO_WIDTH_SPACE, var url: String? = null)
+data class KEmbedEntity(var value: String = EmbedBuilder.ZERO_WIDTH_SPACE, var url: String? = null, val icon: String? = null)
 
 class FieldBuilder : Appendable {
 
