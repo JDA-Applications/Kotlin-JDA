@@ -17,9 +17,8 @@
 
 package club.minnced.kjda
 
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
 import net.dv8tion.jda.core.AccountType
+import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.audio.factory.IAudioSendFactory
@@ -44,10 +43,10 @@ import org.apache.http.HttpHost
  *
  * @see    JDABuilder
  */
-fun client(accountType: AccountType, init: JDABuilder.() -> Unit) = async(CommonPool) {
+fun client(accountType: AccountType, init: JDABuilder.() -> Unit): JDA {
     val builder = JDABuilder(accountType)
     builder.init()
-    return@async builder.buildBlocking()
+    return builder.buildAsync()
 }
 
 /** Lazy infix overload for [JDABuilder.setToken] */
