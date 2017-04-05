@@ -17,6 +17,8 @@
 
 package club.minnced.kjda
 
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.async
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.OnlineStatus
@@ -42,10 +44,10 @@ import org.apache.http.HttpHost
  *
  * @see    JDABuilder
  */
-fun client(accountType: AccountType, init: JDABuilder.() -> Unit) {
+fun client(accountType: AccountType, init: JDABuilder.() -> Unit) = async(CommonPool) {
     val builder = JDABuilder(accountType)
     builder.init()
-    builder.buildAsync()
+    return@async builder.buildBlocking()
 }
 
 /** Lazy infix overload for [JDABuilder.setToken] */
