@@ -66,10 +66,5 @@ operator fun Appendable.plusAssign(other: IMentionable) {
  *
  * @return[MessageBuilder] - current MessageBuilder
  */
-infix fun MessageBuilder.embed(init: KEmbedBuilder.() -> Unit): MessageBuilder {
-    setEmbed(club.minnced.kjda.builders.embed {
-        init()
-        build()
-    })
-    return this
-}
+infix inline fun MessageBuilder.embed(crossinline init: KEmbedBuilder.() -> Unit): MessageBuilder
+    = setEmbed(club.minnced.kjda.builders.embed { init() })

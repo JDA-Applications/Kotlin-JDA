@@ -20,42 +20,49 @@ import kotlinx.coroutines.experimental.*
 import net.dv8tion.jda.core.requests.RestAction
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
+import kotlin.coroutines.experimental.CoroutineContext
 
 /** Constructs a new [RestPromise] for this [RestAction] instance */
 fun<V> RestAction<V?>.promise() = RestPromise(this)
 
 /** Shortcut for [RestPromise.then] */
-infix fun<V> RestAction<V?>?.then(apply: V?.() -> Unit) = this?.promise()?.then { it.apply() }
-/** Shortcut for [RestPromise.catch] */
-infix fun<V> RestAction<V?>?.catch(apply: Throwable?.() -> Unit) = this?.promise()?.catch { it.apply() }
-
-fun<V> RestAction<V?>?.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
-    = if (condition) this?.promise()?.block() else { }
-
-fun<V> RestAction<V?>?.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { })
-    = if (!condition) this?.promise()?.block() else { }
-
-fun<V> RestAction<V?>?.prepare() = async(CommonPool, start = false) {
-    if (this@prepare === null)
-        error("Cannot use coroutine in this context! Null RestAction!")
-    return@async this@prepare.promise()
+infix fun<V> RestAction<V?>.then(apply: V?.() -> Unit) = this.promise().then {
+    it.apply()
 }
 
-fun<V> RestAction<V?>?.start() = launch(CommonPool) {
-    if (this@start === null)
-        error("Cannot use coroutine in this context! Null RestAction!")
+/** Shortcut for [RestPromise.catch] */
+infix fun<V> RestAction<V?>.catch(apply: Throwable?.() -> Unit) = this.promise().catch {
+    it.apply()
+}
+
+// Conditional
+fun<V> RestAction<V?>.onlyIf(condition: Boolean, block: RestPromise<V>.() -> Unit = { }) {
+    if (condition)
+        this.promise().block()
+}
+
+fun<V> RestAction<V?>.unless(condition: Boolean, block: RestPromise<V>.() -> Unit = { }) {
+    if (!condition)
+        this.promise().block()
+}
+
+// Coroutines
+fun<V> RestAction<V?>.prepare(context: CoroutineContext = CommonPool) = async(context, start = false) {
+    this@prepare.promise()
+}
+
+fun<V> RestAction<V?>.start(context: CoroutineContext = CommonPool) = launch(context) {
     this@start.queue()
 }
 
-suspend fun<V> RestAction<V?>?.get() = run(CommonPool) {
-    if (this === null)
-        error("Cannot use coroutine in this context! Null RestAction!")
-    return@run this@get.complete()
+suspend fun<V> RestAction<V?>.get(context: CoroutineContext = CommonPool) = run(context) {
+    this@get.complete()
 }
 
-suspend fun<V> RestAction<V?>?.after(time: Long, unit: TimeUnit = MILLISECONDS) = run(CommonPool) {
+suspend fun<V> RestAction<V?>.after(time: Long, unit: TimeUnit = MILLISECONDS, context: CoroutineContext = CommonPool)
+= run(context) {
     delay(time, unit)
-    return@run this@after.get()
+    this@after.get()
 }
 
 /**
@@ -119,12 +126,13 @@ internal class Callback<T> {
 
     var finishedValue: T? = null
     var finished: Boolean = false
+
     var backing: (T?) -> Unit = { }
-        set(value) {
+    set(value) {
             if (finished)
                 value(finishedValue)
             field = value
-        }
+    }
 
     fun call(value: T?): Unit = synchronized( backing ) {
         finished = true

@@ -50,36 +50,49 @@ fun client(accountType: AccountType, init: JDABuilder.() -> Unit): JDA {
 }
 
 /** Lazy infix overload for [JDABuilder.setToken] */
-infix inline fun JDABuilder.token(lazyToken: () -> String)     = this.setToken(lazyToken())
+infix inline fun <reified T: JDABuilder> T.token(lazyToken: () -> String): T
+    = this.setToken(lazyToken()) as T
 /** Lazy infix overload for [JDABuilder.setGame] */
-infix inline fun JDABuilder.game(lazy: () -> String)           = this.setGame(Game.of(lazy()))
+infix inline fun <reified T: JDABuilder> T.game(lazy: () -> String): T
+    = this.setGame(Game.of(lazy())) as T
 /** Lazy infix overload for [JDABuilder.setStatus] */
-infix inline fun JDABuilder.status(lazy: () -> OnlineStatus)   = this.setStatus(lazy())
+infix inline fun <reified T: JDABuilder> T.status(lazy: () -> OnlineStatus): T
+    = this.setStatus(lazy()) as T
 /** Lazy infix overload for [JDABuilder.setEventManager] */
-infix inline fun JDABuilder.manager(lazy: () -> IEventManager) = this.setEventManager(lazy())
+infix inline fun <reified T: JDABuilder> T.manager(lazy: () -> IEventManager): T
+    = this.setEventManager(lazy()) as T
 /** Lazy infix overload for [JDABuilder.addListener] */
-infix inline fun JDABuilder.listener(lazy: () -> Any)          = this.addListener(lazy())
+infix inline fun <reified T: JDABuilder> T.listener(lazy: () -> Any): T
+    = this.addListener(lazy()) as T
 /** Lazy infix overload for [JDABuilder.setProxy] */
-infix inline fun JDABuilder.proxy(lazy: () -> HttpHost)        = this.setProxy(lazy())
+infix inline fun <reified T: JDABuilder> T.proxy(lazy: () -> HttpHost): T
+    = this.setProxy(lazy()) as T
 /** Lazy infix overload for [JDABuilder.setAudioSendFactory] */
-infix inline fun JDABuilder.audioSendFactory(lazy: () -> IAudioSendFactory)
-    = this.setAudioSendFactory(lazy())
+infix inline fun <reified T: JDABuilder> T.audioSendFactory(lazy: () -> IAudioSendFactory): T
+    = this.setAudioSendFactory(lazy()) as T
 
 /** Infix overload for [JDABuilder.setIdle] */
-infix fun JDABuilder.idle(lazy: Boolean)          = this.setIdle(lazy)
+infix inline fun <reified T: JDABuilder> T.idle(lazy: Boolean): T
+    = this.setIdle(lazy) as T
 /** Infix overload for [JDABuilder.setEnableShutdownHook] */
-infix fun JDABuilder.shutdownHook(lazy: Boolean)  = this.setEnableShutdownHook(lazy)
+infix inline fun <reified T: JDABuilder> T.shutdownHook(lazy: Boolean): T
+    = this.setEnableShutdownHook(lazy) as T
 /** Infix overload for [JDABuilder.setAudioEnabled] */
-infix fun JDABuilder.audio(lazy: Boolean)         = this.setAudioEnabled(lazy)
+infix inline fun <reified T: JDABuilder> T.audio(lazy: Boolean): T
+    = this.setAudioEnabled(lazy) as T
 /** Infix overload for [JDABuilder.setWebSocketTimeout] */
-infix fun JDABuilder.connectTimeout(lazy: Int)    = this.setWebSocketTimeout(lazy)
+infix inline fun <reified T: JDABuilder> T.connectTimeout(lazy: Int): T
+    = this.setWebSocketTimeout(lazy) as T
 /** Infix overload for [JDABuilder.setAutoReconnect] */
-infix fun JDABuilder.autoReconnect(lazy: Boolean) = this.setAutoReconnect(lazy)
+infix inline fun <reified T: JDABuilder> T.autoReconnect(lazy: Boolean): T
+    = this.setAutoReconnect(lazy) as T
 
 /** Overload for [JDABuilder.addListener] */
-fun JDABuilder.listener(vararg listener: Any)       = this.addListener(*listener)
+inline fun <reified T: JDABuilder> T.listener(vararg listener: Any): T
+    = this.addListener(*listener) as T
 /** Overload for [JDABuilder.removeListener] */
-fun JDABuilder.removeLisetner(vararg listener: Any) = this.removeListener(*listener)
+inline fun <reified T: JDABuilder> T.removeLisetner(vararg listener: Any): T
+    = this.removeListener(*listener) as T
 
 /** Operator overload for [JDABuilder.addListener] */
-operator fun JDABuilder.plusAssign(other: Any) { listener(other) }
+inline operator fun <reified T: JDABuilder> T.plusAssign(other: Any) { listener(other) }
