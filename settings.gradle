@@ -1,1 +1,3 @@
 rootProject.name = 'Kotlin-JDA'
+if (file('../JDA').exists())
+    includeBuild '../JDA'

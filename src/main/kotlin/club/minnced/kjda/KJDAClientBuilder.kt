@@ -63,7 +63,7 @@ infix inline fun <reified T: JDABuilder> T.manager(lazy: () -> IEventManager): T
     = this.setEventManager(lazy()) as T
 /** Lazy infix overload for [JDABuilder.addListener] */
 infix inline fun <reified T: JDABuilder> T.listener(lazy: () -> Any): T
-    = this.addListener(lazy()) as T
+    = this.addEventListener(lazy()) as T
 /** Lazy infix overload for [JDABuilder.setProxy] */
 infix inline fun <reified T: JDABuilder> T.proxy(lazy: () -> HttpHost): T
     = this.setProxy(lazy()) as T
@@ -89,10 +89,10 @@ infix inline fun <reified T: JDABuilder> T.autoReconnect(lazy: Boolean): T
 
 /** Overload for [JDABuilder.addListener] */
 inline fun <reified T: JDABuilder> T.listener(vararg listener: Any): T
-    = this.addListener(*listener) as T
+    = this.addEventListener(*listener) as T
 /** Overload for [JDABuilder.removeListener] */
 inline fun <reified T: JDABuilder> T.removeLisetner(vararg listener: Any): T
-    = this.removeListener(*listener) as T
+    = this.removeEventListener(*listener) as T
 
 /** Operator overload for [JDABuilder.addListener] */
 inline operator fun <reified T: JDABuilder> T.plusAssign(other: Any) { listener(other) }
