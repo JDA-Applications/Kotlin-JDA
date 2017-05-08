@@ -91,7 +91,7 @@ infix inline fun <reified T: JDABuilder> T.autoReconnect(lazy: Boolean): T
 inline fun <reified T: JDABuilder> T.listener(vararg listener: Any): T
     = this.addEventListener(*listener) as T
 /** Overload for [JDABuilder.removeListener] */
-inline fun <reified T: JDABuilder> T.removeLisetner(vararg listener: Any): T
+inline fun <reified T: JDABuilder> T.removeListener(vararg listener: Any): T
     = this.removeEventListener(*listener) as T
 
 /** Operator overload for [JDABuilder.addListener] */
