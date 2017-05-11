@@ -19,12 +19,16 @@ package club.minnced.kjda.entities
 import club.minnced.kjda.after
 import club.minnced.kjda.get
 import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.runBlocking
 import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.MessageHistory
 import java.util.LinkedList
 import java.util.Queue
 import java.util.concurrent.TimeUnit.SECONDS
+import kotlin.coroutines.experimental.buildSequence
 
 fun MessageHistory.paginated() = produce<Message>(CommonPool) {
     val messages: Queue<Message> = LinkedList(retrievePast(100).get())
@@ -35,3 +39,24 @@ fun MessageHistory.paginated() = produce<Message>(CommonPool) {
     }
     while (messages.isNotEmpty())
 }
+
+fun MessageChannel.messages(context: CoroutineDispatcher = CommonPool) = produce<Message>(context) {
+    val iterable = iterableHistory
+    iterable.forEach { send(it) }
+    close()
+}
+
+fun MessageChannel.asSequence(): Sequence<Message> {
+    val messages = messages()
+    return buildSequence {
+        runBlocking {
+            messages.receiveOrNull()
+        }
+    }
+}
+
+fun <R> MessageChannel.map(mapper: (Message) -> R) = asSequence().map(mapper)
+
+fun MessageChannel.filter(filter: (Message) -> Boolean) = asSequence().filter(filter)
+
+fun MessageChannel.forEach(block: (Message) -> Unit) = asSequence().forEach(block)

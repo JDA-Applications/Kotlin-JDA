@@ -44,7 +44,7 @@ targetCompatibility = 1.8
 
 group = 'club.minnced'
 version = '0.BETA.1'
-def jda_version = '3.0.0_181'
+def jda_version = '3.0.0_193'
 
 sourceSets {
     main.kotlin.srcDirs += 'src/main/kotlin'
