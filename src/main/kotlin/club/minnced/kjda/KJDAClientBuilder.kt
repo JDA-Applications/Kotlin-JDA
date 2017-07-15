@@ -17,6 +17,7 @@
 
 package club.minnced.kjda
 
+import com.neovisionaries.ws.client.WebSocketFactory
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
@@ -24,7 +25,7 @@ import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.audio.factory.IAudioSendFactory
 import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.hooks.IEventManager
-import org.apache.http.HttpHost
+import okhttp3.OkHttpClient
 
 /**
  * Constructs a new [JDABuilder] and applies the specified
@@ -61,12 +62,9 @@ infix inline fun <reified T: JDABuilder> T.status(lazy: () -> OnlineStatus): T
 /** Lazy infix overload for [JDABuilder.setEventManager] */
 infix inline fun <reified T: JDABuilder> T.manager(lazy: () -> IEventManager): T
     = this.setEventManager(lazy()) as T
-/** Lazy infix overload for [JDABuilder.addListener] */
+/** Lazy infix overload for [JDABuilder.addEventListener] */
 infix inline fun <reified T: JDABuilder> T.listener(lazy: () -> Any): T
     = this.addEventListener(lazy()) as T
-/** Lazy infix overload for [JDABuilder.setProxy] */
-infix inline fun <reified T: JDABuilder> T.proxy(lazy: () -> HttpHost): T
-    = this.setProxy(lazy()) as T
 /** Lazy infix overload for [JDABuilder.setAudioSendFactory] */
 infix inline fun <reified T: JDABuilder> T.audioSendFactory(lazy: () -> IAudioSendFactory): T
     = this.setAudioSendFactory(lazy()) as T
@@ -80,19 +78,38 @@ infix inline fun <reified T: JDABuilder> T.shutdownHook(lazy: Boolean): T
 /** Infix overload for [JDABuilder.setAudioEnabled] */
 infix inline fun <reified T: JDABuilder> T.audio(lazy: Boolean): T
     = this.setAudioEnabled(lazy) as T
-/** Infix overload for [JDABuilder.setWebSocketTimeout] */
-infix inline fun <reified T: JDABuilder> T.connectTimeout(lazy: Int): T
-    = this.setWebSocketTimeout(lazy) as T
 /** Infix overload for [JDABuilder.setAutoReconnect] */
 infix inline fun <reified T: JDABuilder> T.autoReconnect(lazy: Boolean): T
     = this.setAutoReconnect(lazy) as T
 
-/** Overload for [JDABuilder.addListener] */
+/**
+ * Provides new WebSocketFactory and calls the provided lazy
+ * initializer to allow setting options like timeouts
+ */
+infix inline fun <reified T: JDABuilder> T.websocketSettings(init: WebSocketFactory.() -> Unit): T {
+    val factory = WebSocketFactory()
+    factory.init()
+    setWebsocketFactory(factory)
+    return this
+}
+
+/**
+ * Provides new OkHttpClient.Builder and calls the provided lazy
+ * initializer to allow setting options like timeouts
+ */
+infix inline fun <reified T: JDABuilder> T.httpSettings(init: OkHttpClient.Builder.() -> Unit): T {
+    val builder = OkHttpClient.Builder()
+    builder.init()
+    setHttpClientBuilder(builder)
+    return this
+}
+
+/** Overload for [JDABuilder.addEventListener] */
 inline fun <reified T: JDABuilder> T.listener(vararg listener: Any): T
     = this.addEventListener(*listener) as T
-/** Overload for [JDABuilder.removeListener] */
+/** Overload for [JDABuilder.removeEventListener] */
 inline fun <reified T: JDABuilder> T.removeListener(vararg listener: Any): T
     = this.removeEventListener(*listener) as T
 
-/** Operator overload for [JDABuilder.addListener] */
+/** Operator overload for [JDABuilder.addEventListener] */
 inline operator fun <reified T: JDABuilder> T.plusAssign(other: Any) { listener(other) }

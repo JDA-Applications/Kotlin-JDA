@@ -23,6 +23,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.EventListener
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.io.File
+import java.util.concurrent.TimeUnit.SECONDS
 
 fun main(args: Array<String>) {
     client(BOT) {
@@ -37,6 +38,16 @@ fun main(args: Array<String>) {
         this += EventListener {
             if (it is ReadyEvent)
                 println("Dab!!!")
+        }
+
+        httpSettings {
+            connectTimeout(2, SECONDS)
+            readTimeout(3, SECONDS)
+            writeTimeout(2, SECONDS)
+        }
+
+        websocketSettings {
+            connectionTimeout = SECONDS.toMillis(1).toInt()
         }
     }
 }
