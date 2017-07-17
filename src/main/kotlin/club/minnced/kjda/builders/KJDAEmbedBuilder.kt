@@ -32,6 +32,7 @@ class KEmbedBuilder internal constructor() : Appendable {
     var title: String? = null
     var url  : String? = null
     var color: Int?    = null
+        set(value) { field = value?.and(0xFFFFFF) }
 
     var thumbnail: String? = null
     var image    : String? = null
