@@ -179,7 +179,7 @@ class FieldBuilder : Appendable {
 
 
     override fun append(csq: CharSequence?): FieldBuilder {
-        this += csq
+        value += csq
         return this
     }
 
